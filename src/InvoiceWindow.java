@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,9 +23,6 @@ public class InvoiceWindow extends JFrame{
     JTextField jtClientName;
     JTextField jtClientAddress;
 
-    String sClientName;
-    String jlClientAddress;
-
     String sCompanyName;
     String sCompanyAddress;
     String sCompanyPhoneNumber;
@@ -32,14 +31,10 @@ public class InvoiceWindow extends JFrame{
     String sClientAddress;
 
     JPanel jpMain;
-    JPanel jpTable;
     JPanel jpButtons;
 
     String[] columnNames;
     Object[][] data;
-
-    JTable jtbItemTable;
-    JScrollPane jspItemTable;
 
     JButton jbClear;
     JButton jbSubmit;
@@ -68,7 +63,6 @@ public class InvoiceWindow extends JFrame{
         jlClientName = new JLabel("Client Name: ");
         jlClientAddress = new JLabel("Client Address: ");
 
-
         jtCompanyName = new JTextField();
 
         jtCompanyAddress = new JTextField();
@@ -85,7 +79,6 @@ public class InvoiceWindow extends JFrame{
         jlClientName.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         jpMain = new JPanel(new GridLayout(6, 2));
-        jpTable = new JPanel(new BorderLayout());
         jpButtons = new JPanel(new GridLayout(1, 2));
 
         jbClear = new JButton("Clear");
@@ -106,16 +99,10 @@ public class InvoiceWindow extends JFrame{
         jpMain.add(jlClientAddress);
         jpMain.add(jtClientAddress);
 
-        jtbItemTable = new JTable(data, columnNames);
-        jspItemTable = new JScrollPane(jtbItemTable);
-
-        jpTable.add(jspItemTable, BorderLayout.CENTER);
-
         jpButtons.add(jbClear);
         jpButtons.add(jbSubmit);
 
         add(jpMain, BorderLayout.NORTH);
-        add(jpTable, BorderLayout.CENTER);
         add(jpButtons, BorderLayout.SOUTH);
     }
 
