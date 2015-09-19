@@ -21,6 +21,16 @@ public class InvoiceWindow extends JFrame{
     JTextField jtClientName;
     JTextField jtClientAddress;
 
+    String sClientName;
+    String jlClientAddress;
+
+    String sCompanyName;
+    String sCompanyAddress;
+    String sCompanyPhoneNumber;
+
+    String sClientName;
+    String sClientAddress;
+
     JPanel jpMain;
     JPanel jpTable;
     JPanel jpButtons;
@@ -129,22 +139,35 @@ public class InvoiceWindow extends JFrame{
             public boolean verify(JComponent input) {
                 boolean verify = validatePhoneNumber(jtCompanyPhoneNumber.getText());
                 System.out.println(verify);
-                while (verify == false){
+                while (!(verify)) {
                     input.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
                     break;
                 }
-                input.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
+                if (verify == true) {
+                    input.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
+                }
                 return verify;
             }
         });
 
+        jbSubmit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sCompanyName = jtCompanyName.getText();
+                sCompanyAddress = jtCompanyAddress.getText();
+                sCompanyPhoneNumber = jtCompanyPhoneNumber.getText();
+
+                sClientName = jtClientName.getText();
+                sClientAddress = jtClientAddress.getText();
+            }
+        });
     }
 
     private static boolean validatePhoneNumber(String phoneNo) {
         //validate phone numbers of format "1234567890"
         if (phoneNo.matches("\\d{10}")) return true;
             //validating phone number with -, . or spaces
-        else if(phoneNo.matches("\\d{3}[\\-|\\.||\\s]+[\\d{4}[\\-|\\.||\\s]]+[\\d{4}[\\-|\\.||\\s]]")) return true;
+        else if(phoneNo.matches("\\d{3}[\\-|\\.|\\s]+[\\d{4}[\\-|\\.|\\s]]+[\\d{4}[\\-|\\.|\\s]]")) return true;
             //validating phone number with extension length from 3 to 5
         else if(phoneNo.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}")) return true;
             //validating phone number where area code is in braces ()
@@ -153,17 +176,6 @@ public class InvoiceWindow extends JFrame{
         else return false;
 
     }
-
-    private static boolean validateAdress(String adress){
-        if (adress.matches("\\d{1,}")){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-
 
 
 }
