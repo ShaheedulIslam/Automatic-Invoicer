@@ -124,18 +124,43 @@ public class InvoiceWindow extends JFrame{
                 }
         );
 
-        jbSubmit.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        //1. Check if the text fields are empty
-                        //If they are show an error message
-                        //2. Use regex to check if the adress is in the correct format
-                        //3. Use regex to check if the phone number is in the correct format
-                        //4. Export to pdf (create a method)
-                    }
+        jtCompanyPhoneNumber.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(JComponent input) {
+                boolean verify = validatePhoneNumber(jtCompanyPhoneNumber.getText());
+                System.out.println(verify);
+                while (verify == false){
+                    input.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+                    break;
                 }
-        );
+                input.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
+                return verify;
+            }
+        });
+
+    }
+
+    private static boolean validatePhoneNumber(String phoneNo) {
+        //validate phone numbers of format "1234567890"
+        if (phoneNo.matches("\\d{10}")) return true;
+            //validating phone number with -, . or spaces
+        else if(phoneNo.matches("\\d{3}[\\-|\\.||\\s]+[\\d{4}[\\-|\\.||\\s]]+[\\d{4}[\\-|\\.||\\s]]")) return true;
+            //validating phone number with extension length from 3 to 5
+        else if(phoneNo.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}")) return true;
+            //validating phone number where area code is in braces ()
+        else if(phoneNo.matches("\\(\\d{3}\\)-\\d{3}-\\d{4}"))return true;
+            //return false if nothing matches the input
+        else return false;
+
+    }
+
+    private static boolean validateAdress(String adress){
+        if (adress.matches("\\d{1,}")){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 
