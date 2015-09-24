@@ -18,11 +18,13 @@ public class InvoiceWindow extends JFrame{
     JTextField jtfInvoiceNumber;
     JTextField jtfInvoiceDate;
 
+    JComboBox jcbItemAmount;
+
     String sCompanyDescription;
     String sClientDescription;
 
     JPanel jpMain;
-    JPanel jpButtons;
+    JPanel jpMain1;
 
     JButton jbSubmit;
 
@@ -51,7 +53,11 @@ public class InvoiceWindow extends JFrame{
         jtfInvoiceNumber = new JTextField();
         jtfInvoiceDate = new JTextField();
 
+        String[] sItemAmount = new String[]{"1 Items", "2 Items","3 Items"};
+        jcbItemAmount = new JComboBox(sItemAmount);
+
         jpMain = new JPanel(new GridLayout(0, 2));
+        jpMain1 = new JPanel(new GridLayout(0, 4));
 
         jtfInvoiceNumber.setBorder(blackBorder);
         jtxtCompanyDescription.setBorder(blackBorder);
@@ -71,6 +77,7 @@ public class InvoiceWindow extends JFrame{
         jpMain.add(jtfInvoiceDate);
 
         add(jpMain, BorderLayout.CENTER);
+        add(jpMain1, BorderLayout.SOUTH);
 
 
     }
