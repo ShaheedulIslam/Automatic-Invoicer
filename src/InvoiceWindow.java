@@ -1,9 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class InvoiceWindow extends JFrame{
 
@@ -11,22 +8,26 @@ public class InvoiceWindow extends JFrame{
     JLabel jlbClientDescription;
     JLabel jlbInvoiceNumber;
     JLabel jlbInvoiceDate;
+    JLabel jlbQuantity;
+    JLabel jlbDescriptionItem;
+    JLabel jlbPrice;
 
     JTextArea jtxtCompanyDescription;
     JTextArea jtxtClientDescription;
 
     JTextField jtfInvoiceNumber;
     JTextField jtfInvoiceDate;
+    JTextField jtfQuantity;
+    JTextField jtfDescriptionItem;
+    JTextField jtfPrice;
 
-    JComboBox jcbItemAmount;
+    JButton jbSubmit;
 
     String sCompanyDescription;
     String sClientDescription;
 
     JPanel jpMain;
     JPanel jpMain1;
-
-    JButton jbSubmit;
 
     public InvoiceWindow(){
         super("Invoice Program");
@@ -40,12 +41,29 @@ public class InvoiceWindow extends JFrame{
     }
 
     public void addComponents(){
+        Font font = new Font("Serif", Font.BOLD, 25);
         Border blackBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
 
         jlbCompanyDescription = new JLabel("From: ");
         jlbClientDescription = new JLabel("Bill To: ");
         jlbInvoiceNumber = new JLabel("Invoice Number: ");
         jlbInvoiceDate = new JLabel("Invoice Date: ");
+        jlbQuantity = new JLabel("Quantity: ");
+        jlbDescriptionItem = new JLabel("Description: ");
+        jlbPrice = new JLabel("Price: ");
+
+        jlbInvoiceDate.setFont(font);
+        jlbCompanyDescription.setFont(font);
+        jlbClientDescription.setFont(font);
+        jlbInvoiceNumber.setFont(font);
+        jlbInvoiceDate.setFont(font);
+        jlbQuantity.setFont(font);
+        jlbDescriptionItem.setFont(font);
+        jlbPrice.setFont(font);
+
+        jtfQuantity = new JTextField();
+        jtfDescriptionItem = new JTextField();
+        jtfPrice = new JTextField();
 
         jtxtCompanyDescription = new JTextArea();
         jtxtClientDescription = new JTextArea();
@@ -53,16 +71,18 @@ public class InvoiceWindow extends JFrame{
         jtfInvoiceNumber = new JTextField();
         jtfInvoiceDate = new JTextField();
 
-        String[] sItemAmount = new String[]{"1 Items", "2 Items","3 Items"};
-        jcbItemAmount = new JComboBox(sItemAmount);
+        jbSubmit = new JButton("Submit");
 
         jpMain = new JPanel(new GridLayout(0, 2));
-        jpMain1 = new JPanel(new GridLayout(0, 4));
+        jpMain1 = new JPanel(new GridLayout(0, 2));
 
         jtfInvoiceNumber.setBorder(blackBorder);
         jtxtCompanyDescription.setBorder(blackBorder);
         jtxtClientDescription.setBorder(blackBorder);
         jtfInvoiceDate.setBorder(blackBorder);
+        jtfPrice.setBorder(blackBorder);
+        jtfDescriptionItem.setBorder(blackBorder);
+        jtfQuantity.setBorder(blackBorder);
 
         jpMain.add(jlbCompanyDescription);
         jpMain.add(jtxtCompanyDescription);
@@ -76,10 +96,16 @@ public class InvoiceWindow extends JFrame{
         jpMain.add(jlbInvoiceDate);
         jpMain.add(jtfInvoiceDate);
 
+        jpMain1.add(jlbQuantity);
+        jpMain1.add(jtfQuantity);
+        jpMain1.add(jlbDescriptionItem);
+        jpMain1.add(jtfDescriptionItem);
+        jpMain1.add(jlbPrice);
+        jpMain1.add(jtfPrice);
+        jpMain1.add(jbSubmit);
+
         add(jpMain, BorderLayout.CENTER);
         add(jpMain1, BorderLayout.SOUTH);
-
-
     }
 
     public void addActions(){
