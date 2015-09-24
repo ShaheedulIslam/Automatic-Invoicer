@@ -1,33 +1,43 @@
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class InvoiceWindow extends JFrame{
 
-    JLabel jlbCompanyDescription;
-    JLabel jlbClientDescription;
-    JLabel jlbInvoiceNumber;
-    JLabel jlbInvoiceDate;
-    JLabel jlbQuantity;
-    JLabel jlbDescriptionItem;
-    JLabel jlbPrice;
+    JLabel jlCompanyName;
+    JLabel jlCompanyAddress;
+    JLabel jlCompanyPhoneNumber;
 
-    JTextArea jtxtCompanyDescription;
-    JTextArea jtxtClientDescription;
+    JLabel jlClientName;
+    JLabel jlClientAddress;
 
-    JTextField jtfInvoiceNumber;
-    JTextField jtfInvoiceDate;
-    JTextField jtfQuantity;
-    JTextField jtfDescriptionItem;
-    JTextField jtfPrice;
+    JTextField jtCompanyName;
+    JTextField jtCompanyAddress;
+    JTextField jtCompanyPhoneNumber;
 
-    JButton jbSubmit;
+    JTextField jtClientName;
+    JTextField jtClientAddress;
 
-    String sCompanyDescription;
-    String sClientDescription;
+    String sCompanyName;
+    String sCompanyAddress;
+    String sCompanyPhoneNumber;
+
+    String sClientName;
+    String sClientAddress;
 
     JPanel jpMain;
-    JPanel jpMain1;
+    JPanel jpButtons;
+
+    String[] columnNames;
+    Object[][] data;
+
+    JButton jbClear;
+    JButton jbSubmit;
 
     public InvoiceWindow(){
         super("Invoice Program");
@@ -41,75 +51,88 @@ public class InvoiceWindow extends JFrame{
     }
 
     public void addComponents(){
-        Font font = new Font("Serif", Font.BOLD, 25);
-        Border blackBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
 
-        jlbCompanyDescription = new JLabel("From: ");
-        jlbClientDescription = new JLabel("Bill To: ");
-        jlbInvoiceNumber = new JLabel("Invoice Number: ");
-        jlbInvoiceDate = new JLabel("Invoice Date: ");
-        jlbQuantity = new JLabel("Quantity: ");
-        jlbDescriptionItem = new JLabel("Description: ");
-        jlbPrice = new JLabel("Price: ");
+        String[] columnNames = {"Item Description", "Quantity", "Price per Item", "Total"};
+        Object[][] data = new Object[50][50];
 
-        jlbInvoiceDate.setFont(font);
-        jlbCompanyDescription.setFont(font);
-        jlbClientDescription.setFont(font);
-        jlbInvoiceNumber.setFont(font);
-        jlbInvoiceDate.setFont(font);
-        jlbQuantity.setFont(font);
-        jlbDescriptionItem.setFont(font);
-        jlbPrice.setFont(font);
+        jlCompanyName = new JLabel("Company Name: ");
 
-        jtfQuantity = new JTextField();
-        jtfDescriptionItem = new JTextField();
-        jtfPrice = new JTextField();
+        jlCompanyAddress = new JLabel("Company Address: ");
+        jlCompanyPhoneNumber = new JLabel("Company Phone Number: ");
 
-        jtxtCompanyDescription = new JTextArea();
-        jtxtClientDescription = new JTextArea();
+        jlClientName = new JLabel("Client Name: ");
+        jlClientAddress = new JLabel("Client Address: ");
 
-        jtfInvoiceNumber = new JTextField();
-        jtfInvoiceDate = new JTextField();
+        jtCompanyName = new JTextField();
 
+        jtCompanyAddress = new JTextField();
+        jtCompanyPhoneNumber = new JTextField();
+
+        jtClientName = new JTextField();
+        jtClientAddress = new JTextField();
+
+        jlCompanyName.setBorder(new EmptyBorder(10, 10, 10, 10));
+        jlCompanyPhoneNumber.setBorder(new EmptyBorder(10, 10, 10, 10));
+        jlCompanyAddress.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        jlClientAddress.setBorder(new EmptyBorder(10, 10, 10, 10));
+        jlClientName.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        jpMain = new JPanel(new GridLayout(6, 2));
+        jpButtons = new JPanel(new GridLayout(1, 2));
+
+        jbClear = new JButton("Clear");
         jbSubmit = new JButton("Submit");
 
-        jpMain = new JPanel(new GridLayout(0, 2));
-        jpMain1 = new JPanel(new GridLayout(0, 2));
+        jpMain.add(jlCompanyName);
+        jpMain.add(jtCompanyName);
 
-        jtfInvoiceNumber.setBorder(blackBorder);
-        jtxtCompanyDescription.setBorder(blackBorder);
-        jtxtClientDescription.setBorder(blackBorder);
-        jtfInvoiceDate.setBorder(blackBorder);
-        jtfPrice.setBorder(blackBorder);
-        jtfDescriptionItem.setBorder(blackBorder);
-        jtfQuantity.setBorder(blackBorder);
+        jpMain.add(jlCompanyAddress);
+        jpMain.add(jtCompanyAddress);
 
-        jpMain.add(jlbCompanyDescription);
-        jpMain.add(jtxtCompanyDescription);
+        jpMain.add(jlCompanyPhoneNumber);
+        jpMain.add(jtCompanyPhoneNumber);
 
-        jpMain.add(jlbClientDescription);
-        jpMain.add(jtxtClientDescription);
+        jpMain.add(jlClientName);
+        jpMain.add(jtClientName);
 
-        jpMain.add(jlbInvoiceNumber);
-        jpMain.add(jtfInvoiceNumber);
+        jpMain.add(jlClientAddress);
+        jpMain.add(jtClientAddress);
 
-        jpMain.add(jlbInvoiceDate);
-        jpMain.add(jtfInvoiceDate);
+        jpButtons.add(jbClear);
+        jpButtons.add(jbSubmit);
 
-        jpMain1.add(jlbQuantity);
-        jpMain1.add(jtfQuantity);
-        jpMain1.add(jlbDescriptionItem);
-        jpMain1.add(jtfDescriptionItem);
-        jpMain1.add(jlbPrice);
-        jpMain1.add(jtfPrice);
-        jpMain1.add(jbSubmit);
-
-        add(jpMain, BorderLayout.CENTER);
-        add(jpMain1, BorderLayout.SOUTH);
+        add(jpMain, BorderLayout.NORTH);
+        add(jpButtons, BorderLayout.SOUTH);
     }
 
     public void addActions(){
+        jbClear.addActionListener(
+                new ActionListener() {
 
+                    public void actionPerformed(ActionEvent e) {
+                        jtCompanyName.setText("");
+                        jtCompanyAddress.setText("");
+                        jtCompanyPhoneNumber.setText("");
+
+                        jtClientName.setText("");
+                        jtClientAddress.setText("");
+                    }
+                }
+        );
+
+        jbSubmit.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        sCompanyName = jtCompanyName.getText();
+                        sCompanyAddress = jtCompanyAddress.getText();
+                        sCompanyPhoneNumber = jtCompanyPhoneNumber.getText();
+
+                        sClientName = jtClientName.getText();
+                        sClientAddress = jtClientAddress.getText();
+                    }
+                });
     }
 
 
