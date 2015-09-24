@@ -9,9 +9,14 @@ public class InvoiceWindow extends JFrame{
 
     JLabel jlbCompanyDescription;
     JLabel jlbClientDescription;
+    JLabel jlbInvoiceNumber;
+    JLabel jlbInvoiceDate;
 
     JTextArea jtxtCompanyDescription;
     JTextArea jtxtClientDescription;
+
+    JTextField jtfInvoiceNumber;
+    JTextField jtfInvoiceDate;
 
     String sCompanyDescription;
     String sClientDescription;
@@ -33,22 +38,37 @@ public class InvoiceWindow extends JFrame{
     }
 
     public void addComponents(){
+        Border blackBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
+
         jlbCompanyDescription = new JLabel("From: ");
         jlbClientDescription = new JLabel("Bill To: ");
+        jlbInvoiceNumber = new JLabel("Invoice Number: ");
+        jlbInvoiceDate = new JLabel("Invoice Date: ");
 
         jtxtCompanyDescription = new JTextArea();
         jtxtClientDescription = new JTextArea();
 
-        jtxtCompanyDescription.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
-        jtxtClientDescription.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+        jtfInvoiceNumber = new JTextField();
+        jtfInvoiceDate = new JTextField();
 
-        jpMain = new JPanel(new GridLayout(2, 2));
+        jpMain = new JPanel(new GridLayout(0, 2));
+
+        jtfInvoiceNumber.setBorder(blackBorder);
+        jtxtCompanyDescription.setBorder(blackBorder);
+        jtxtClientDescription.setBorder(blackBorder);
+        jtfInvoiceDate.setBorder(blackBorder);
 
         jpMain.add(jlbCompanyDescription);
         jpMain.add(jtxtCompanyDescription);
 
         jpMain.add(jlbClientDescription);
         jpMain.add(jtxtClientDescription);
+
+        jpMain.add(jlbInvoiceNumber);
+        jpMain.add(jtfInvoiceNumber);
+
+        jpMain.add(jlbInvoiceDate);
+        jpMain.add(jtfInvoiceDate);
 
         add(jpMain, BorderLayout.CENTER);
 
