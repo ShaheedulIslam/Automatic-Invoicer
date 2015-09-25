@@ -11,24 +11,26 @@ public class InvoiceWindow extends JFrame{
 
     JLabel jlCompanyName;
     JLabel jlCompanyAddress;
-    JLabel jlCompanyPhoneNumber;
+
+    JLabel jlDate;
 
     JLabel jlClientName;
     JLabel jlClientAddress;
 
     JTextField jtCompanyName;
     JTextField jtCompanyAddress;
-    JTextField jtCompanyPhoneNumber;
+    JTextField jtDate;
 
     JTextField jtClientName;
     JTextField jtClientAddress;
 
     String sCompanyName;
     String sCompanyAddress;
-    String sCompanyPhoneNumber;
 
     String sClientName;
     String sClientAddress;
+
+    String sDate;
 
     JPanel jpMain;
     JPanel jpButtons;
@@ -56,24 +58,25 @@ public class InvoiceWindow extends JFrame{
         Object[][] data = new Object[50][50];
 
         jlCompanyName = new JLabel("Company Name: ");
-
         jlCompanyAddress = new JLabel("Company Address: ");
-        jlCompanyPhoneNumber = new JLabel("Company Phone Number: ");
+
+        jlDate = new JLabel("Date: ");
 
         jlClientName = new JLabel("Client Name: ");
         jlClientAddress = new JLabel("Client Address: ");
 
         jtCompanyName = new JTextField();
-
         jtCompanyAddress = new JTextField();
-        jtCompanyPhoneNumber = new JTextField();
+
+        jtDate = new JTextField();
 
         jtClientName = new JTextField();
         jtClientAddress = new JTextField();
 
         jlCompanyName.setBorder(new EmptyBorder(10, 10, 10, 10));
-        jlCompanyPhoneNumber.setBorder(new EmptyBorder(10, 10, 10, 10));
         jlCompanyAddress.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        jlDate.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         jlClientAddress.setBorder(new EmptyBorder(10, 10, 10, 10));
         jlClientName.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -90,14 +93,14 @@ public class InvoiceWindow extends JFrame{
         jpMain.add(jlCompanyAddress);
         jpMain.add(jtCompanyAddress);
 
-        jpMain.add(jlCompanyPhoneNumber);
-        jpMain.add(jtCompanyPhoneNumber);
-
         jpMain.add(jlClientName);
         jpMain.add(jtClientName);
 
         jpMain.add(jlClientAddress);
         jpMain.add(jtClientAddress);
+
+        jpMain.add(jlDate);
+        jpMain.add(jtDate);
 
         jpButtons.add(jbClear);
         jpButtons.add(jbSubmit);
@@ -113,7 +116,6 @@ public class InvoiceWindow extends JFrame{
                     public void actionPerformed(ActionEvent e) {
                         jtCompanyName.setText("");
                         jtCompanyAddress.setText("");
-                        jtCompanyPhoneNumber.setText("");
 
                         jtClientName.setText("");
                         jtClientAddress.setText("");
@@ -127,7 +129,7 @@ public class InvoiceWindow extends JFrame{
                     public void actionPerformed(ActionEvent e) {
                         sCompanyName = jtCompanyName.getText();
                         sCompanyAddress = jtCompanyAddress.getText();
-                        sCompanyPhoneNumber = jtCompanyPhoneNumber.getText();
+
 
                         sClientName = jtClientName.getText();
                         sClientAddress = jtClientAddress.getText();
