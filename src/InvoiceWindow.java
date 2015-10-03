@@ -1,8 +1,5 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,9 +12,11 @@ public class InvoiceWindow extends JFrame{
 
     JLabel jlDate;
 
+    JLabel jlItemName;
     JLabel jlClientName;
     JLabel jlClientAddress;
 
+    JTextField jtItemName;
     JTextField jtCompanyName;
     JTextField jtCompanyAddress;
     JTextField jtDate;
@@ -41,11 +40,24 @@ public class InvoiceWindow extends JFrame{
 
     JButton jbSubmit;
     JButton jbAddItem;
+    JButton jbDeleteItem;
 
-    ArrayList<JTextField> alQTYTextField;
-    ArrayList<JTextField> alDescriptionTextField;
-    ArrayList<JTextField> alUnitPriceTextField;
-    ArrayList<JLabel> alLabels;
+    int iNumOfItems;
+
+    ArrayList<JTextField[]> aljtxtFields;
+    ArrayList<JLabel[]> alLabels;
+
+    JLabel jlArray[];
+    JTextField jtfArray[];
+
+    JLabel jlQty;
+    JLabel jlDescription;
+    JLabel jlUnitPrice;
+
+    JTextField jtQty;
+    JTextField jtDescription;
+    JTextField jtUnitPrice;
+
 
     public InvoiceWindow(){
         super("Invoice Program");
@@ -64,6 +76,8 @@ public class InvoiceWindow extends JFrame{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e){
         }
+
+        int iNumOfItems = 0;
 
         String[] columnNames = {"Item Description", "Quantity", "Price per Item", "Total"};
         Object[][] data = new Object[50][50];
@@ -97,6 +111,7 @@ public class InvoiceWindow extends JFrame{
 
         jbSubmit = new JButton("Submit");
         jbAddItem = new JButton("Add Item");
+        jbDeleteItem = new JButton("Delete Item");
 
         jpMain.add(jlCompanyName);
         jpMain.add(jtCompanyName);
@@ -114,13 +129,15 @@ public class InvoiceWindow extends JFrame{
         jpMain.add(jtDate);
 
         jpMain.add(jbAddItem);
+        jpMain.add(jbDeleteItem);
+
         jpButtons.add(jbSubmit);
 
         add(jpMain, BorderLayout.NORTH);
         add(jpButtons, BorderLayout.SOUTH);
     }
 
-    public void addActions(){
+    public void addActions() {
 
 
         jbSubmit.addActionListener(
@@ -144,32 +161,51 @@ public class InvoiceWindow extends JFrame{
         jbAddItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                System.out.println("Adding Item");
+
                 jpMain.remove(jbAddItem);
+                jpMain.remove(jbDeleteItem);
                 revalidate();
 
-                alQTYTextField = new ArrayList<JTextField>();
-                alDescriptionTextField = new ArrayList<JTextField>();
-                alUnitPriceTextField = new ArrayList<JTextField>();
-                alLabels = new ArrayList<JLabel>();
+                iNumOfItems++;
+                System.out.println();
+                System.out.println("Number of Items: " + iNumOfItems);
 
-                JLabel jlQty = new JLabel("Quantity: ");
-                JLabel jlDescription = new JLabel("Description: ");
-                JLabel jlUnitPrice = new JLabel("Unit Price: ");
+                jlItemName = new JLabel("Name: ");
+                jlQty = new JLabel("Quantity: ");
+                jlDescription = new JLabel("Description: ");
+                jlUnitPrice = new JLabel("Unit Price: ");
 
-                JTextField jtQty = new JTextField();
-                JTextField jtDescription = new JTextField();
-                JTextField jtUnitPrice = new JTextField();
+                jtItemName = new JTextField();
+                jtQty = new JTextField();
+                jtDescription = new JTextField();
+                jtUnitPrice = new JTextField();
 
-                alQTYTextField.add(jtQty);
-                alDescriptionTextField.add(jtDescription);
-                alUnitPriceTextField.add(jtUnitPrice);
+                JTextField jtfArray[] = new JTextField[4];
+                jtfArray[0] = jtItemName;
+                jtfArray[1] = jtQty;
+                jtfArray[2] = jtDescription;
+                jtfArray[3] = jtUnitPrice;
 
-                alLabels.add(jlQty);
-                alLabels.add(jlDescription);
-                alLabels.add(jlUnitPrice);
+                JLabel jlArray[] = new JLabel[4];
+                jlArray[0] = jlItemName;
+                jlArray[1] = jlQty;
+                jlArray[2] = jlDescription;
+                jlArray[3] = jlUnitPrice;
+
+                aljtxtFields = new ArrayList<JTextField[]>();
+                alLabels = new ArrayList<JLabel[]>();
+
+                aljtxtFields.add(jtfArray);
+                alLabels.add(jlArray);
+
+                jpMain.add(jlItemName);
+                jpMain.add(jtItemName);
 
                 jpMain.add(jlQty);
                 jpMain.add(jtQty);
+
 
                 jpMain.add(jlDescription);
                 jpMain.add(jtDescription);
@@ -178,15 +214,85 @@ public class InvoiceWindow extends JFrame{
                 jpMain.add(jtUnitPrice);
 
                 jpMain.add(jbAddItem);
+                jpMain.add(jbDeleteItem);
 
+                jlItemName.setBorder(new EmptyBorder(10, 10, 10, 10));
                 jlQty.setBorder(new EmptyBorder(10, 10, 10, 10));
                 jlDescription.setBorder(new EmptyBorder(10, 10, 10, 10));
 
                 jlUnitPrice.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+                jpMain.add(jbAddItem);
+                jpMain.add(jbDeleteItem);
+
                 revalidate();
+
             }
         });
+
+        jbDeleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!(iNumOfItems <= 0)){
+                    System.out.println("Deleting Item");
+                    iNumOfItems--;
+
+                    System.out.println();
+                    System.out.println("Number of Items: " + iNumOfItems);
+
+                    jpMain.remove(jbAddItem);
+                    jpMain.remove(jbDeleteItem);
+
+                    jpMain.remove(jlItemName);
+                    jpMain.remove(jlUnitPrice);
+                    jpMain.remove(jlDescription);
+                    jpMain.remove(jlQty);
+
+                    jpMain.remove(jtItemName);
+                    jpMain.remove(jtUnitPrice);
+                    jpMain.remove(jtDescription);
+                    jpMain.remove(jtQty);
+
+                    jpMain.add(jbAddItem);
+                    jpMain.add(jbDeleteItem);
+                    revalidate();
+
+                    try {
+                        aljtxtFields.remove(aljtxtFields.size() - 1);
+                        alLabels.remove(alLabels.size() - 1);
+                    } catch (Exception e1) {
+                        /*JTextField jtfArray[] = new JTextField[4];
+                        JLabel jlArray[] = new JLabel[4];
+
+                        jlArray[0] = jlItemName;
+                        jlArray[1] = jlQty;
+                        jlArray[2] = jlDescription;
+                        jlArray[3] = jlUnitPrice;
+
+                        jtfArray[0] = jtItemName;
+                        jtfArray[1] = jtQty;
+                        jtfArray[2] = jtDescription;
+                        jtfArray[3] = jtUnitPrice;
+
+                        aljtxtFields.add(jtfArray);
+                        alLabels.add(jlArray);
+
+                        aljtxtFields.remove(aljtxtFields.size() - 1);
+                        alLabels.remove(alLabels.size() - 1);*/
+                    }
+
+                    System.out.println();
+
+                    System.out.println();
+                    System.out.println("Text Field Array Size: " + aljtxtFields.size());
+                    System.out.println("Labels Array Size: " + aljtxtFields.size());
+                }else{
+                    System.out.println("NO ALLOWED TO DELETE ITEM.");
+                }
+
+            }
+        });
+
+
     }
-
-
 }
