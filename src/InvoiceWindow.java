@@ -73,7 +73,7 @@ public class InvoiceWindow extends JFrame{
     public void addComponents(){
 
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e){
         }
 
@@ -162,137 +162,34 @@ public class InvoiceWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                System.out.println("Adding Item");
-
-                jpMain.remove(jbAddItem);
-                jpMain.remove(jbDeleteItem);
-                revalidate();
-
-                iNumOfItems++;
-                System.out.println();
-                System.out.println("Number of Items: " + iNumOfItems);
-
-                jlItemName = new JLabel("Name: ");
-                jlQty = new JLabel("Quantity: ");
-                jlDescription = new JLabel("Description: ");
-                jlUnitPrice = new JLabel("Unit Price: ");
-
-                jtItemName = new JTextField();
-                jtQty = new JTextField();
-                jtDescription = new JTextField();
-                jtUnitPrice = new JTextField();
-
-                JTextField jtfArray[] = new JTextField[4];
-                jtfArray[0] = jtItemName;
-                jtfArray[1] = jtQty;
-                jtfArray[2] = jtDescription;
-                jtfArray[3] = jtUnitPrice;
-
-                JLabel jlArray[] = new JLabel[4];
-                jlArray[0] = jlItemName;
-                jlArray[1] = jlQty;
-                jlArray[2] = jlDescription;
-                jlArray[3] = jlUnitPrice;
-
-                aljtxtFields = new ArrayList<JTextField[]>();
-                alLabels = new ArrayList<JLabel[]>();
-
-                aljtxtFields.add(jtfArray);
-                alLabels.add(jlArray);
-
-                jpMain.add(jlItemName);
-                jpMain.add(jtItemName);
-
-                jpMain.add(jlQty);
-                jpMain.add(jtQty);
-
-
-                jpMain.add(jlDescription);
-                jpMain.add(jtDescription);
-
-                jpMain.add(jlUnitPrice);
-                jpMain.add(jtUnitPrice);
-
-                jpMain.add(jbAddItem);
-                jpMain.add(jbDeleteItem);
-
-                jlItemName.setBorder(new EmptyBorder(10, 10, 10, 10));
-                jlQty.setBorder(new EmptyBorder(10, 10, 10, 10));
-                jlDescription.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-                jlUnitPrice.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-                jpMain.add(jbAddItem);
-                jpMain.add(jbDeleteItem);
-
-                revalidate();
-
             }
         });
 
         jbDeleteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!(iNumOfItems <= 0)){
-                    System.out.println("Deleting Item");
-                    iNumOfItems--;
-
-                    System.out.println();
-                    System.out.println("Number of Items: " + iNumOfItems);
-
-                    jpMain.remove(jbAddItem);
-                    jpMain.remove(jbDeleteItem);
-
-                    jpMain.remove(jlItemName);
-                    jpMain.remove(jlUnitPrice);
-                    jpMain.remove(jlDescription);
-                    jpMain.remove(jlQty);
-
-                    jpMain.remove(jtItemName);
-                    jpMain.remove(jtUnitPrice);
-                    jpMain.remove(jtDescription);
-                    jpMain.remove(jtQty);
-
-                    jpMain.add(jbAddItem);
-                    jpMain.add(jbDeleteItem);
-                    revalidate();
-
-                    try {
-                        aljtxtFields.remove(aljtxtFields.size() - 1);
-                        alLabels.remove(alLabels.size() - 1);
-                    } catch (Exception e1) {
-                        /*JTextField jtfArray[] = new JTextField[4];
-                        JLabel jlArray[] = new JLabel[4];
-
-                        jlArray[0] = jlItemName;
-                        jlArray[1] = jlQty;
-                        jlArray[2] = jlDescription;
-                        jlArray[3] = jlUnitPrice;
-
-                        jtfArray[0] = jtItemName;
-                        jtfArray[1] = jtQty;
-                        jtfArray[2] = jtDescription;
-                        jtfArray[3] = jtUnitPrice;
-
-                        aljtxtFields.add(jtfArray);
-                        alLabels.add(jlArray);
-
-                        aljtxtFields.remove(aljtxtFields.size() - 1);
-                        alLabels.remove(alLabels.size() - 1);*/
-                    }
-
-                    System.out.println();
-
-                    System.out.println();
-                    System.out.println("Text Field Array Size: " + aljtxtFields.size());
-                    System.out.println("Labels Array Size: " + aljtxtFields.size());
-                }else{
-                    System.out.println("NO ALLOWED TO DELETE ITEM.");
-                }
 
             }
         });
 
+
+    }
+
+    /**
+     * Creates an item panel
+     * It also adds it to the arraylist holding
+     * All textfields and stuff
+     */
+    public void createItemPanel(){
+        JPanel panel = new JPanel();
+        JTextField txFd = (JTextField) panel.getComponent(1);
+    }
+
+    /**
+     * Removes the latest item panel
+     * Also removes from the array
+     */
+    public void removeItemPanel(){
 
     }
 }
