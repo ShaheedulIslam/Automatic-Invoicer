@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +33,8 @@ public class InvoiceWindow extends JFrame{
 
     String sDate;
 
-    JPanel jpMain;
+    JPanel jpMain1;
+    JPanel jpMainInfo;
     JPanel jpButtons;
 
     String[] columnNames;
@@ -71,16 +73,7 @@ public class InvoiceWindow extends JFrame{
     }
 
     public void addComponents(){
-
-        try {
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e){
-        }
-
         int iNumOfItems = 0;
-
-        String[] columnNames = {"Item Description", "Quantity", "Price per Item", "Total"};
-        Object[][] data = new Object[50][50];
 
         jlCompanyName = new JLabel("Company Name: ");
         jlCompanyAddress = new JLabel("Company Address: ");
@@ -106,35 +99,52 @@ public class InvoiceWindow extends JFrame{
         jlClientAddress.setBorder(new EmptyBorder(10, 10, 10, 10));
         jlClientName.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        jpMain = new JPanel(new GridLayout(0, 2));
-        jpButtons = new JPanel(new GridLayout(1, 1));
+        jpMain1 = new JPanel(); //Just a place holder for the JPanels so it is in the centre
+        jpMainInfo = new JPanel(new GridLayout(0, 2));  //Will have JLabels and JTextFields for Company and Client info
+        jpButtons = new JPanel(new GridLayout(1, 1));   //Hold the submit button
+
+        jpMain1.setLayout(new BoxLayout(jpMain1, BoxLayout.Y_AXIS));
 
         jbSubmit = new JButton("Submit");
         jbAddItem = new JButton("Add Item");
         jbDeleteItem = new JButton("Delete Item");
 
-        jpMain.add(jlCompanyName);
-        jpMain.add(jtCompanyName);
+        //Add jpMain1 to the center of the JFrame
+        add(jpMain1, BorderLayout.CENTER);
 
-        jpMain.add(jlCompanyAddress);
-        jpMain.add(jtCompanyAddress);
+        //Add components to jpMainInfo
+        jpMainInfo.add(jlClientName);
+        jpMainInfo.add(jtClientName);
 
-        jpMain.add(jlClientName);
-        jpMain.add(jtClientName);
+        jpMainInfo.add(jlClientAddress);
+        jpMainInfo.add(jtClientAddress);
 
-        jpMain.add(jlClientAddress);
-        jpMain.add(jtClientAddress);
+        jpMainInfo.add(jlDate);
+        jpMainInfo.add(jtDate);
 
-        jpMain.add(jlDate);
-        jpMain.add(jtDate);
+        jpMainInfo.add(jbAddItem);
+        jpMainInfo.add(jbDeleteItem);
 
-        jpMain.add(jbAddItem);
-        jpMain.add(jbDeleteItem);
+        //Add jpMainInfo to jpMain1
+        jpMain1.add(jpMainInfo);
 
+        //Add submit button to jpButtons
         jpButtons.add(jbSubmit);
 
-        add(jpMain, BorderLayout.NORTH);
-        add(jpButtons, BorderLayout.SOUTH);
+        //Add jpButtons to jpMain1
+        //Set Minimum size of the button panel
+        jpMain1.add(jpButtons);
+
+        Double dScreenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        int iScreenWidth = dScreenWidth.intValue();
+
+        jpButtons.setMaximumSize(new Dimension(iScreenWidth, 400));
+
+        //Create a title bordered for the jpanels
+        TitledBorder tbBorder = BorderFactory.createTitledBorder("Company and Client Info");
+        tbBorder.setTitleColor(Color.BLACK);
+        tbBorder.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        jpMainInfo.setBorder(tbBorder);
     }
 
     public void addActions() {
@@ -181,8 +191,7 @@ public class InvoiceWindow extends JFrame{
      * All textfields and stuff
      */
     public void createItemPanel(){
-        JPanel panel = new JPanel();
-        JTextField txFd = (JTextField) panel.getComponent(1);
+
     }
 
     /**
