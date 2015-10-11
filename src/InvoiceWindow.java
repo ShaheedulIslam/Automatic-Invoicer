@@ -37,20 +37,15 @@ public class InvoiceWindow extends JFrame{
     JPanel jpMainInfo;
     JPanel jpButtons;
 
-    String[] columnNames;
-    Object[][] data;
-
     JButton jbSubmit;
     JButton jbAddItem;
     JButton jbDeleteItem;
 
+    int iCurrentJPanel;
     int iNumOfItems;
 
-    ArrayList<JTextField[]> aljtxtFields;
-    ArrayList<JLabel[]> alLabels;
-
-    JLabel jlArray[];
-    JTextField jtfArray[];
+    ArrayList<JPanel[]> alJPanel;
+    JPanel[] jpPanelArray;
 
     JLabel jlQty;
     JLabel jlDescription;
@@ -73,7 +68,13 @@ public class InvoiceWindow extends JFrame{
     }
 
     public void addComponents(){
-        int iNumOfItems = 0;
+
+        alJPanel = new ArrayList<>();
+
+        iCurrentJPanel = 0;
+        iNumOfItems = 0;
+
+        jpPanelArray = new JPanel[4];
 
         jlCompanyName = new JLabel("Company Name: ");
         jlCompanyAddress = new JLabel("Company Address: ");
@@ -140,7 +141,7 @@ public class InvoiceWindow extends JFrame{
 
         jpButtons.setMaximumSize(new Dimension(iScreenWidth, 400));
 
-        //Create a title bordered for the jpanels
+        //Create a title bordered for the jPanels
         TitledBorder tbBorder = BorderFactory.createTitledBorder("Company and Client Info");
         tbBorder.setTitleColor(Color.BLACK);
         tbBorder.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -171,18 +172,10 @@ public class InvoiceWindow extends JFrame{
         jbAddItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                iCurrentJPanel++;
+                createItemPanel();
             }
         });
-
-        jbDeleteItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-
-
     }
 
     /**
@@ -191,7 +184,28 @@ public class InvoiceWindow extends JFrame{
      * All textfields and stuff
      */
     public void createItemPanel(){
+        iNumOfItems++;
+        JPanel jpTemporary = createItemComponents();
+        jpPanelArray = new JPanel[100000];
 
+        TitledBorder tbBorder = BorderFactory.createTitledBorder("Item no. " + iNumOfItems);
+        tbBorder.setTitleColor(Color.BLACK);
+        tbBorder.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        jpTemporary.setBorder(tbBorder);
+
+        jpMain1.remove(jbAddItem);
+        jpMain1.remove(jbDeleteItem);
+
+        jpMain1.remove(jpButtons);
+        alJPanel.add(jpPanelArray);
+
+        jpTemporary.add(jbAddItem);
+        jpTemporary.add(jbDeleteItem);
+
+        jpMain1.add(jpTemporary);
+        jpMain1.add(jpButtons);
+
+        revalidate();
     }
 
     /**
@@ -200,5 +214,43 @@ public class InvoiceWindow extends JFrame{
      */
     public void removeItemPanel(){
 
+    }
+
+    /**
+     * Creates all JTextFields and JLabels
+     * For the item
+     * Then adds a border with the item number on it
+     * Also adds to array
+     * Returns a JPanel
+     */
+    public JPanel createItemComponents(){
+
+        JLabel jlItemName = new JLabel("Item Name: ");
+        JLabel jlItemQuantity = new JLabel("Item Quantity: ");
+        JLabel jlItemPrice = new JLabel("Item Price: ");
+
+        JTextField jtfItemName = new JTextField();
+        JTextField jtfItemQuantity = new JTextField();
+        JTextField jtfItemPrice = new JTextField();
+
+        jlItemName.setBorder(new EmptyBorder(10, 10, 10, 10));
+        jlItemQuantity.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        jlItemPrice.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        JPanel jpTemporary = new JPanel(new GridLayout(0, 2));
+
+        jpTemporary.add(jlItemName);
+        jpTemporary.add(jtfItemName);
+
+        jpTemporary.add(jlItemQuantity);
+        jpTemporary.add(jtfItemQuantity);
+
+        jpTemporary.add(jlItemPrice);
+        jpTemporary.add(jtfItemPrice);
+
+        jpPanelArray[iCurrentJPanel] = jpTemporary;
+
+        return  jpTemporary;
     }
 }
