@@ -277,7 +277,7 @@ public class InvoiceWindow extends JFrame {
             jpMain1.remove(alJPanel.get(iCurrentJPanel)[iCurrentJPanel]);
             alJPanel.remove(alJPanel.get(iCurrentJPanel)[iCurrentJPanel]);
 
-
+            revalidate();
         }
     }
 }
