@@ -5,8 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class InvoiceWindow extends JFrame{
+public class InvoiceWindow extends JFrame {
 
     JLabel jlCompanyName;
     JLabel jlCompanyAddress;
@@ -45,7 +46,7 @@ public class InvoiceWindow extends JFrame{
     int iNumOfItems;
 
     ArrayList<JPanel[]> alJPanel;
-    JPanel[] jpPanelArray;
+    JPanel[] aryPanelArray;
 
     JLabel jlQty;
     JLabel jlDescription;
@@ -56,7 +57,7 @@ public class InvoiceWindow extends JFrame{
     JTextField jtUnitPrice;
 
 
-    public InvoiceWindow(){
+    public InvoiceWindow() {
         super("Invoice Program");
         setSize(500, 500);
         setLayout(new BorderLayout());
@@ -67,14 +68,14 @@ public class InvoiceWindow extends JFrame{
 
     }
 
-    public void addComponents(){
+    public void addComponents() {
 
         alJPanel = new ArrayList<>();
 
-        iCurrentJPanel = 0;
+        iCurrentJPanel = -1;
         iNumOfItems = 0;
 
-        jpPanelArray = new JPanel[4];
+        aryPanelArray = new JPanel[4];
 
         jlCompanyName = new JLabel("Company Name: ");
         jlCompanyAddress = new JLabel("Company Address: ");
@@ -176,6 +177,13 @@ public class InvoiceWindow extends JFrame{
                 createItemPanel();
             }
         });
+
+        jbDeleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeItemPanel();
+            }
+        });
     }
 
     /**
@@ -183,10 +191,10 @@ public class InvoiceWindow extends JFrame{
      * It also adds it to the arraylist holding
      * All textfields and stuff
      */
-    public void createItemPanel(){
+    public void createItemPanel() {
         iNumOfItems++;
         JPanel jpTemporary = createItemComponents();
-        jpPanelArray = new JPanel[100000];
+        aryPanelArray = new JPanel[100000];
 
         TitledBorder tbBorder = BorderFactory.createTitledBorder("Item no. " + iNumOfItems);
         tbBorder.setTitleColor(Color.BLACK);
@@ -197,7 +205,7 @@ public class InvoiceWindow extends JFrame{
         jpMain1.remove(jbDeleteItem);
 
         jpMain1.remove(jpButtons);
-        alJPanel.add(jpPanelArray);
+        alJPanel.add(aryPanelArray);
 
         jpTemporary.add(jbAddItem);
         jpTemporary.add(jbDeleteItem);
@@ -205,16 +213,14 @@ public class InvoiceWindow extends JFrame{
         jpMain1.add(jpTemporary);
         jpMain1.add(jpButtons);
 
+        aryPanelArray[iCurrentJPanel] = jpTemporary;
+        alJPanel.add(aryPanelArray);
+
+        System.out.println(Arrays.toString(aryPanelArray));
+
         revalidate();
     }
 
-    /**
-     * Removes the latest item panel
-     * Also removes from the array
-     */
-    public void removeItemPanel(){
-
-    }
 
     /**
      * Creates all JTextFields and JLabels
@@ -223,7 +229,9 @@ public class InvoiceWindow extends JFrame{
      * Also adds to array
      * Returns a JPanel
      */
-    public JPanel createItemComponents(){
+    public JPanel createItemComponents() {
+
+        System.out.println("Creating Components for Item");
 
         JLabel jlItemName = new JLabel("Item Name: ");
         JLabel jlItemQuantity = new JLabel("Item Quantity: ");
@@ -233,11 +241,14 @@ public class InvoiceWindow extends JFrame{
         JTextField jtfItemQuantity = new JTextField();
         JTextField jtfItemPrice = new JTextField();
 
+        System.out.println("Adding Borders");
+
         jlItemName.setBorder(new EmptyBorder(10, 10, 10, 10));
         jlItemQuantity.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         jlItemPrice.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        System.out.println("Creating temporary JPanel");
         JPanel jpTemporary = new JPanel(new GridLayout(0, 2));
 
         jpTemporary.add(jlItemName);
@@ -249,8 +260,24 @@ public class InvoiceWindow extends JFrame{
         jpTemporary.add(jlItemPrice);
         jpTemporary.add(jtfItemPrice);
 
-        jpPanelArray[iCurrentJPanel] = jpTemporary;
+        System.out.println("Adding Temporary JPanel to array aryPanelArray");
+        aryPanelArray[iCurrentJPanel] = jpTemporary;
 
-        return  jpTemporary;
+
+        return jpTemporary;
+    }
+
+    /**
+     * Removes the latest item panel
+     * Also removes from the array
+     */
+    public void removeItemPanel() {
+        if (!(iNumOfItems == 0)) {
+            System.out.println("REMOVING JPanel");
+            jpMain1.remove(alJPanel.get(iCurrentJPanel)[iCurrentJPanel]);
+            alJPanel.remove(alJPanel.get(iCurrentJPanel)[iCurrentJPanel]);
+
+
+        }
     }
 }
