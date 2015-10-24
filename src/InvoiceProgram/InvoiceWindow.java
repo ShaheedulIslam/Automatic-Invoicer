@@ -3,12 +3,8 @@ package InvoiceProgram;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class InvoiceWindow extends JFrame {
 
@@ -47,13 +43,12 @@ public class InvoiceWindow extends JFrame {
     JButton jbDeleteItem;
     JButton jbCloseButton;
 
-    public JTabbedPane jtbMainTabbedPane;
+    public JTabbedPane jtpMainTabbedPane;
 
     int iCurrentJPanel;
     int iNumOfItems;
 
-    ArrayList<JPanel[]> alJPanel;
-    JPanel[] aryPanelArray;
+    ArrayList<JPanel> alJPanel;
 
     JLabel jlQty;
     JLabel jlDescription;
@@ -63,9 +58,10 @@ public class InvoiceWindow extends JFrame {
     JTextField jtDescription;
     JTextField jtUnitPrice;
 
+    JPanel jpTabTitle;
+
     EmptyBorder bLabelBorder;
 
-    JPanel x;
 
 
     public InvoiceWindow() {
@@ -95,7 +91,6 @@ public class InvoiceWindow extends JFrame {
         alJPanel = new ArrayList<>();
         iCurrentJPanel = -1;
         iNumOfItems = 0;
-        aryPanelArray = new JPanel[4];
         bLabelBorder = new EmptyBorder(10, 10, 10, 10);
 
         //----------------------------------------
@@ -132,9 +127,8 @@ public class InvoiceWindow extends JFrame {
         jpMain1 = new JPanel(new GridLayout()); //Just a place holder for the JPanels so it is in the centre
         jpMainInfo = new JPanel(new GridLayout(0, 2));  //Will have JLabels and JTextFields for Company and Client info
         jpButtons = new JPanel(new GridLayout(1, 2));   //Hold the submit button
-        x = new JPanel();
 
-        jtbMainTabbedPane = new JTabbedPane();
+        jtpMainTabbedPane = new JTabbedPane();
 
         //----------------------------------------
         //Add all the borders
@@ -170,11 +164,6 @@ public class InvoiceWindow extends JFrame {
         jpButtons.add(jbSubmit);
         jpButtons.add(jbAddItem);
 
-        x.add(jlItemLabel);
-        x.add(jbCloseButton);
-        x.add(jlItemLabel);
-        x.add(jbCloseButton);
-
         //Add jpButtons to jpMain1
         //Set Minimum size of the button panel
         add(jpButtons, BorderLayout.SOUTH);
@@ -183,13 +172,8 @@ public class InvoiceWindow extends JFrame {
         //Customize the Components
         //-------------------------------------------
 
-        jtbMainTabbedPane.add("Client and Company Information", jpMainInfo);
-        jpMain1.add(jtbMainTabbedPane);
-        jbCloseButton.setBorderPainted(false);
-        jbCloseButton.setContentAreaFilled(false);
-        jbCloseButton.setFocusPainted(false);
-        jbCloseButton.setOpaque(false);
-        jbCloseButton.setForeground(Color.RED);
+        jtpMainTabbedPane.add("Client and Company Information", jpMainInfo);
+        jpMain1.add(jtpMainTabbedPane);
 
     }
 
@@ -218,103 +202,63 @@ public class InvoiceWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 iCurrentJPanel++;
+                iNumOfItems++;
                 createItemPanel();
             }
         });
 
     }
 
-    /**
-     * Creates an item panel
-     * It also adds it to the arraylist holding
-     * All textfields and stuff
-     */
-    public void createItemPanel() {
-        iNumOfItems++;
-        JPanel jpTemporary = createItemComponents();
-        aryPanelArray = new JPanel[100000];
-
-        alJPanel.add(aryPanelArray);
-
-        aryPanelArray[iCurrentJPanel] = jpTemporary;
-        alJPanel.add(aryPanelArray);
-
-        createCloseableTabbedPane(jpTemporary);
-
-        revalidate();
-    }
-
-
-    /**
-     * Creates all JTextFields and JLabels
-     * For the item
-     * Then adds a border with the item number on it
-     * Also adds to array
-     * Returns a JPanel
-     */
-    public JPanel createItemComponents() {
-
-        System.out.println("Creating Components for Item");
+    public void createItemPanel(){
+        JPanel jpItemPanel = new JPanel(new GridLayout(0, 2));
+        JPanel jpTabTitle = new JPanel();
 
         JLabel jlItemName = new JLabel("Item Name: ");
         JLabel jlItemQuantity = new JLabel("Item Quantity: ");
         JLabel jlItemPrice = new JLabel("Item Price: ");
-
+        JLabel jlTabTitle = new JLabel("Item ");
         JTextField jtfItemName = new JTextField();
         JTextField jtfItemQuantity = new JTextField();
         JTextField jtfItemPrice = new JTextField();
+        JButton jbCloseButton = new JButton("X");
 
-        System.out.println("Adding Borders");
+        jbCloseButton.setForeground(Color.RED);
+        jbCloseButton.setBorderPainted(false);
+        jbCloseButton.setContentAreaFilled(false);
+        jbCloseButton.setFocusPainted(false);
+        jbCloseButton.setOpaque(false);
+        jbCloseButton.setForeground(Color.RED);
+
 
         jlItemName.setBorder(bLabelBorder);
         jlItemQuantity.setBorder(bLabelBorder);
-
         jlItemPrice.setBorder(bLabelBorder);
 
-        System.out.println("Creating temporary JPanel");
-        JPanel jpTemporary = new JPanel(new GridLayout(0, 2));
+        jpItemPanel.add(jlItemName);
+        jpItemPanel.add(jtfItemName);
+        jpItemPanel.add(jlItemQuantity);
+        jpItemPanel.add(jtfItemQuantity);
+        jpItemPanel.add(jlItemPrice);
+        jpItemPanel.add(jtfItemPrice);
+        jpTabTitle.add(jlTabTitle);
+        jpTabTitle.add(jbCloseButton);
 
-        jpTemporary.add(jlItemName);
-        jpTemporary.add(jtfItemName);
+        jtpMainTabbedPane.addTab("",jpItemPanel);
+        jtpMainTabbedPane.setTabComponentAt(jtpMainTabbedPane.getTabCount() - 1, jpTabTitle);
 
-        jpTemporary.add(jlItemQuantity);
-        jpTemporary.add(jtfItemQuantity);
+        alJPanel.add(jpItemPanel);
 
-        jpTemporary.add(jlItemPrice);
-        jpTemporary.add(jtfItemPrice);
-
-        System.out.println("Adding Temporary JPanel to array aryPanelArray");
-        aryPanelArray[iCurrentJPanel] = jpTemporary;
-
-
-        return jpTemporary;
-    }
-
-    /**
-     * Removes the latest item panel
-     * Also removes from the array
-     */
-    public void removeItemPanel(JPanel x) {
-        int index = jtbMainTabbedPane.indexOfTabComponent(x);
-        jtbMainTabbedPane.remove(index);
-    }
-
-    public void createCloseableTabbedPane(JPanel jpTemporary){
-
-        jtbMainTabbedPane.addTab("Item", jpTemporary);
-        jtbMainTabbedPane.setTabComponentAt(iCurrentJPanel+1, x);
-
-        jpMain1.add(jtbMainTabbedPane);
         jbCloseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                iCurrentJPanel--;
-                int index = jtbMainTabbedPane.indexOfTabComponent(x);
-                jtbMainTabbedPane.remove(index);
+                int i = jtpMainTabbedPane.indexOfTabComponent(jpTabTitle);
+                if(i != -1){
+                    jtpMainTabbedPane.remove(i);
+                    alJPanel.remove(alJPanel.size()-1);
+                }
             }
         });
 
     }
-
 
 }
