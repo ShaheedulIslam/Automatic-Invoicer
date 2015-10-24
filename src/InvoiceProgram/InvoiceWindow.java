@@ -10,32 +10,35 @@ public class InvoiceWindow extends JFrame {
 
     JLabel jlCompanyName;
     JLabel jlCompanyAddress;
-
     JLabel jlDate;
-
     JLabel jlItemName;
     JLabel jlClientName;
     JLabel jlClientAddress;
+    JLabel jlQty;
+    JLabel jlDescription;
+    JLabel jlUnitPrice;
     JLabel jlItemLabel;
 
     JTextField jtItemName;
     JTextField jtCompanyName;
     JTextField jtCompanyAddress;
     JTextField jtDate;
-
     JTextField jtClientName;
+    JTextField jtQty;
+    JTextField jtDescription;
+    JTextField jtUnitPrice;
     JTextField jtClientAddress;
 
     String sCompanyName;
     String sCompanyAddress;
-
     String sClientName;
     String sClientAddress;
-
     String sDate;
 
     JPanel jpMain1;
     JPanel jpMainInfo;
+    JPanel jpTabTitle;
+    JPanel jpTabContent;
     JPanel jpButtons;
 
     JButton jbSubmit;
@@ -43,26 +46,14 @@ public class InvoiceWindow extends JFrame {
     JButton jbDeleteItem;
     JButton jbCloseButton;
 
-    public JTabbedPane jtpMainTabbedPane;
+    JTabbedPane jtpMainTabbedPane;
 
-    int iCurrentJPanel;
     int iNumOfItems;
 
-    ArrayList<JPanel> alJPanel;
-
-    JLabel jlQty;
-    JLabel jlDescription;
-    JLabel jlUnitPrice;
-
-    JTextField jtQty;
-    JTextField jtDescription;
-    JTextField jtUnitPrice;
-
-    JPanel jpTabTitle;
+    ArrayList<JTextField[]> alJPanel;
+    JTextField[] jTextFieldArray;
 
     EmptyBorder bLabelBorder;
-
-
 
     public InvoiceWindow() {
         super("Invoice Program");
@@ -89,7 +80,6 @@ public class InvoiceWindow extends JFrame {
         //----------------------------------------
 
         alJPanel = new ArrayList<>();
-        iCurrentJPanel = -1;
         iNumOfItems = 0;
         bLabelBorder = new EmptyBorder(10, 10, 10, 10);
 
@@ -201,7 +191,6 @@ public class InvoiceWindow extends JFrame {
         jbAddItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                iCurrentJPanel++;
                 iNumOfItems++;
                 createItemPanel();
             }
@@ -210,7 +199,9 @@ public class InvoiceWindow extends JFrame {
     }
 
     public void createItemPanel(){
-        JPanel jpItemPanel = new JPanel(new GridLayout(0, 2));
+        iNumOfItems++;
+
+        JPanel jpTabContent = new JPanel(new GridLayout(0, 2));
         JPanel jpTabTitle = new JPanel();
 
         JLabel jlItemName = new JLabel("Item Name: ");
@@ -229,36 +220,43 @@ public class InvoiceWindow extends JFrame {
         jbCloseButton.setOpaque(false);
         jbCloseButton.setForeground(Color.RED);
 
-
         jlItemName.setBorder(bLabelBorder);
         jlItemQuantity.setBorder(bLabelBorder);
         jlItemPrice.setBorder(bLabelBorder);
 
-        jpItemPanel.add(jlItemName);
-        jpItemPanel.add(jtfItemName);
-        jpItemPanel.add(jlItemQuantity);
-        jpItemPanel.add(jtfItemQuantity);
-        jpItemPanel.add(jlItemPrice);
-        jpItemPanel.add(jtfItemPrice);
+        jpTabContent.add(jlItemName);
+        jpTabContent.add(jtfItemName);
+        jpTabContent.add(jlItemQuantity);
+        jpTabContent.add(jtfItemQuantity);
+        jpTabContent.add(jlItemPrice);
+        jpTabContent.add(jtfItemPrice);
         jpTabTitle.add(jlTabTitle);
         jpTabTitle.add(jbCloseButton);
 
-        jtpMainTabbedPane.addTab("",jpItemPanel);
+        jtpMainTabbedPane.addTab("",jpTabContent);
         jtpMainTabbedPane.setTabComponentAt(jtpMainTabbedPane.getTabCount() - 1, jpTabTitle);
 
-        alJPanel.add(jpItemPanel);
+        jTextFieldArray = new JTextField[3];
+
+        jTextFieldArray[0] = jtfItemName;
+        jTextFieldArray[1] = jtfItemPrice;
+        jTextFieldArray[2] = jtfItemQuantity;
+
+        alJPanel.add(jTextFieldArray);
 
         jbCloseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                iNumOfItems--;
                 int i = jtpMainTabbedPane.indexOfTabComponent(jpTabTitle);
                 if(i != -1){
                     jtpMainTabbedPane.remove(i);
-                    alJPanel.remove(alJPanel.size()-1);
+                    alJPanel.remove(alJPanel.size() - 1);
                 }
             }
         });
 
     }
+
 
 }
