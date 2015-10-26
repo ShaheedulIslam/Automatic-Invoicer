@@ -66,6 +66,7 @@ public class InvoiceWindow extends JFrame {
     String[] itemInfo;
     Document document;
     EmptyBorder bLabelBorder;
+    Double totalPrice;
 
     public InvoiceWindow() {
         super("Invoice Program");
@@ -335,7 +336,7 @@ public class InvoiceWindow extends JFrame {
             itemTable.addCell(unitPriceHeader);
             itemTable.addCell(amountHeader);
 
-            System.out.println(Arrays.toString(itemInfo));
+            totalPrice = 0.0;
 
             for (int i = 0; i < alJPanel.size(); i++){
                 String itemName = alJPanel.get(i)[0].getText();
@@ -348,16 +349,23 @@ public class InvoiceWindow extends JFrame {
                 itemTable.addCell(new PdfPCell(new Phrase(price + " ")));  //Price
                 itemTable.addCell(new PdfPCell(new Phrase(amount + " ")));
 
+                totalPrice += amount;
             }
 
             document.add(Chunk.NEWLINE);
             document.add(Chunk.NEWLINE);
 
+            Paragraph pTotalPrice = new Paragraph("Amount Due: " + totalPrice);
+            pTotalPrice.setAlignment(Element.ALIGN_RIGHT);
+
             document.add(itemTable);
+            document.add(Chunk.NEWLINE);
+            document.add(pTotalPrice);
 
             document.close();
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error has occurred");
+            JOptionPane.showMessageDialog(null, "Please enter the correct information");
             e.printStackTrace();
         }
     }
