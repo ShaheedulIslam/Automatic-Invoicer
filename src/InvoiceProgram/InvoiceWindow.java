@@ -1,10 +1,18 @@
 package InvoiceProgram;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.awt.geom.Arc2D;
+import java.io.*;
+import java.util.*;
 
 public class InvoiceWindow extends JFrame {
 
@@ -18,6 +26,7 @@ public class InvoiceWindow extends JFrame {
     JLabel jlDescription;
     JLabel jlUnitPrice;
     JLabel jlItemLabel;
+    JLabel jlSellerName;
 
     JTextField jtItemName;
     JTextField jtCompanyName;
@@ -28,12 +37,14 @@ public class InvoiceWindow extends JFrame {
     JTextField jtDescription;
     JTextField jtUnitPrice;
     JTextField jtClientAddress;
+    JTextField jtSellerName;
 
     String sCompanyName;
     String sCompanyAddress;
     String sClientName;
     String sClientAddress;
     String sDate;
+    String sSellerName;
 
     JPanel jpMain1;
     JPanel jpMainInfo;
@@ -52,12 +63,13 @@ public class InvoiceWindow extends JFrame {
 
     ArrayList<JTextField[]> alJPanel;
     JTextField[] jTextFieldArray;
-
+    String[] itemInfo;
+    Document document;
     EmptyBorder bLabelBorder;
 
     public InvoiceWindow() {
         super("Invoice Program");
-        setSize(500, 200);
+        setSize(500, 300);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         addComponents();
@@ -93,6 +105,7 @@ public class InvoiceWindow extends JFrame {
         jlItemLabel = new JLabel("Item");
         jlClientName = new JLabel("Client Name: ");
         jlClientAddress = new JLabel("Client Address: ");
+        jlSellerName = new JLabel("Seller Name");
 
         //----------------------------------------
         //Initialize al JTextFields
@@ -102,6 +115,7 @@ public class InvoiceWindow extends JFrame {
         jtDate = new JTextField();
         jtClientName = new JTextField();
         jtClientAddress = new JTextField();
+        jtSellerName = new JTextField();
 
         //----------------------------------------
         //Initialize al JButtons
@@ -128,6 +142,7 @@ public class InvoiceWindow extends JFrame {
         jlDate.setBorder(bLabelBorder);
         jlClientAddress.setBorder(bLabelBorder);
         jlClientName.setBorder(bLabelBorder);
+        jlSellerName.setBorder(bLabelBorder);
 
 
         //-------------------------------------------
@@ -138,6 +153,18 @@ public class InvoiceWindow extends JFrame {
         add(jpMain1, BorderLayout.CENTER);
 
         //Add components to jpMainInfo
+        jpMainInfo.add(jlCompanyName);
+        jpMainInfo.add(jtCompanyName);
+
+        jpMainInfo.add(jlSellerName);
+        jpMainInfo.add(jtSellerName);
+
+        jpMainInfo.add(jlCompanyAddress);
+        jpMainInfo.add(jtCompanyAddress);
+
+        jpMainInfo.add(jlClientName);
+        jpMainInfo.add(jtClientName);
+
         jpMainInfo.add(jlClientName);
         jpMainInfo.add(jtClientName);
 
@@ -176,15 +203,13 @@ public class InvoiceWindow extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         sCompanyName = jtCompanyName.getText();
                         sCompanyAddress = jtCompanyAddress.getText();
-
                         sClientName = jtClientName.getText();
                         sClientAddress = jtClientAddress.getText();
+                        sSellerName = jtSellerName.getText();
 
-                        System.out.println("Company Name: " + sCompanyName);
-                        System.out.println("Company Address: " + sCompanyAddress);
-                        System.out.println("Client Name: " + sClientName);
-                        System.out.println("Client Name: " + sClientAddress);
-                        System.out.println();
+                        createPDF();
+                        createItemTable();
+
                     }
                 });
 
@@ -239,8 +264,8 @@ public class InvoiceWindow extends JFrame {
         jTextFieldArray = new JTextField[3];
 
         jTextFieldArray[0] = jtfItemName;
-        jTextFieldArray[1] = jtfItemPrice;
-        jTextFieldArray[2] = jtfItemQuantity;
+        jTextFieldArray[1] = jtfItemQuantity;
+        jTextFieldArray[2] = jtfItemPrice;
 
         alJPanel.add(jTextFieldArray);
 
@@ -256,6 +281,85 @@ public class InvoiceWindow extends JFrame {
             }
         });
 
+    }
+
+    public void createPDF(){
+        try {
+            document = new Document();
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Invoice.pdf"));
+            document.open();
+
+            Font titleFont = FontFactory.getFont("Century-Gothic", 30);
+            Font normalFont = FontFactory.getFont("Century-Gothic", 14);
+
+            Paragraph pCompanyName = new Paragraph(sCompanyName, titleFont);
+            Paragraph pCompanyAddress = new Paragraph(sCompanyAddress, normalFont);
+            Paragraph pSellerName = new Paragraph("From " + sSellerName, normalFont);
+            Paragraph pClientName = new Paragraph("Invoice For " + sClientName, normalFont);
+            Paragraph pClientAddress = new Paragraph(sClientAddress, normalFont);
+            Paragraph pDate = new Paragraph(sDate, normalFont);
+            Paragraph pInvoiceForMessage = new Paragraph("Invoice For", normalFont);
+
+            pCompanyName.setAlignment(Element.ALIGN_LEFT);
+            pSellerName.setAlignment(Element.ALIGN_LEFT);
+            pCompanyAddress.setAlignment(Element.ALIGN_LEFT);
+            pClientName.setAlignment(Element.ALIGN_RIGHT);
+            pClientAddress.setAlignment(Element.ALIGN_RIGHT);
+            pDate.setAlignment(Element.ALIGN_RIGHT);
+            pInvoiceForMessage.setAlignment(Element.ALIGN_RIGHT);
+
+            document.add(pCompanyName);
+            document.add(Chunk.NEWLINE);
+            document.add(pClientName);
+            document.add(pClientAddress);
+
+            document.add(pSellerName);
+            document.add(pCompanyAddress);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createItemTable(){
+        try {
+            PdfPTable itemTable = new PdfPTable(4);
+
+            PdfPCell nameHeader = new PdfPCell(new Phrase("Description"));
+            PdfPCell quantityHeader = new PdfPCell(new Phrase("Quantity"));
+            PdfPCell unitPriceHeader = new PdfPCell(new Phrase("Unit Price"));
+            PdfPCell amountHeader = new PdfPCell(new Phrase("Amount"));
+
+            itemTable.addCell(nameHeader);
+            itemTable.addCell(quantityHeader);
+            itemTable.addCell(unitPriceHeader);
+            itemTable.addCell(amountHeader);
+
+            System.out.println(Arrays.toString(itemInfo));
+
+            for (int i = 0; i < alJPanel.size(); i++){
+                String itemName = alJPanel.get(i)[0].getText();
+                Double quantity = Double.parseDouble(alJPanel.get(i)[1].getText());
+                Double price = Double.parseDouble(alJPanel.get(i)[2].getText());
+                Double amount = price * quantity;
+
+                itemTable.addCell(new PdfPCell(new Phrase(itemName)));  //Name
+                itemTable.addCell(new PdfPCell(new Phrase(quantity + "")));  //Quantity
+                itemTable.addCell(new PdfPCell(new Phrase(price + " ")));  //Price
+                itemTable.addCell(new PdfPCell(new Phrase(amount + " ")));
+
+            }
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            document.add(itemTable);
+
+            document.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error has occurred");
+            e.printStackTrace();
+        }
     }
 
 
