@@ -1,18 +1,23 @@
 package InvoiceProgram;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.Image;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Arc2D;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
+import com.itextpdf.text.Document;
+import java.awt.Font;
+
 
 public class InvoiceWindow extends JFrame {
 
@@ -56,6 +61,7 @@ public class InvoiceWindow extends JFrame {
     JButton jbAddItem;
     JButton jbDeleteItem;
     JButton jbCloseButton;
+    JButton jbFileChooserButton;
 
     JTabbedPane jtpMainTabbedPane;
 
@@ -67,6 +73,11 @@ public class InvoiceWindow extends JFrame {
     Document document;
     EmptyBorder bLabelBorder;
     Double totalPrice;
+    PdfWriter writer;
+    JFileChooser fileChooser;
+    Image pdfImage;
+    com.itextpdf.text.Font normalFont;
+    Font fontForJTF;
 
     public InvoiceWindow() {
         super("Invoice Program");
@@ -82,11 +93,9 @@ public class InvoiceWindow extends JFrame {
     public void addComponents() {
 
         try {
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
-        catch(Exception e){
-
-        }
+        catch(Exception e){}
 
         //----------------------------------------
         //Initialize all the arrays, ints, borders
@@ -125,6 +134,7 @@ public class InvoiceWindow extends JFrame {
         jbAddItem = new JButton("Add Item");
         jbDeleteItem = new JButton("Delete Item");
         jbCloseButton = new JButton("X");
+        jbFileChooserButton = new JButton("Logo not selected");
 
         //----------------------------------------
         //Initialize al JPanels
@@ -154,6 +164,9 @@ public class InvoiceWindow extends JFrame {
         add(jpMain1, BorderLayout.CENTER);
 
         //Add components to jpMainInfo
+        jpMainInfo.add(jbFileChooserButton);
+        jpMainInfo.add(new JLabel());
+
         jpMainInfo.add(jlCompanyName);
         jpMainInfo.add(jtCompanyName);
 
@@ -190,6 +203,15 @@ public class InvoiceWindow extends JFrame {
         //Customize the Components
         //-------------------------------------------
 
+        fontForJTF = new Font("Arial", Font.PLAIN, 20);
+
+        jtCompanyName.setFont(fontForJTF);
+        jtCompanyAddress.setFont(fontForJTF);
+        jtDate.setFont(fontForJTF);
+        jtClientName.setFont(fontForJTF);
+        jtClientAddress.setFont(fontForJTF);
+        jtSellerName.setFont(fontForJTF);
+
         jtpMainTabbedPane.add("Client and Company Information", jpMainInfo);
         jpMain1.add(jtpMainTabbedPane);
 
@@ -207,9 +229,12 @@ public class InvoiceWindow extends JFrame {
                         sClientName = jtClientName.getText();
                         sClientAddress = jtClientAddress.getText();
                         sSellerName = jtSellerName.getText();
+                        sDate = jtDate.getText();
 
                         createPDF();
                         createItemTable();
+
+                        JOptionPane.showMessageDialog(null, "Your Invoice PDF has been created successfully");
 
                     }
                 });
@@ -219,6 +244,30 @@ public class InvoiceWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 iNumOfItems++;
                 createItemPanel();
+            }
+        });
+
+        jbFileChooserButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image files",  ImageIO.getReaderFileSuffixes());
+                    fileChooser = new JFileChooser();
+                    fileChooser.setFileFilter(filter);
+                    int returnValue = fileChooser.showOpenDialog(null);
+                    File file = null;
+
+                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                        file = fileChooser.getSelectedFile();
+                    }
+
+                    pdfImage = Image.getInstance(fileChooser.getSelectedFile().getAbsolutePath());
+                    jbFileChooserButton.setText("Logo Selected");
+
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+
             }
         });
 
@@ -268,6 +317,10 @@ public class InvoiceWindow extends JFrame {
         jTextFieldArray[1] = jtfItemQuantity;
         jTextFieldArray[2] = jtfItemPrice;
 
+        jtfItemName.setFont(fontForJTF);
+        jtfItemQuantity.setFont(fontForJTF);
+        jtfItemPrice.setFont(fontForJTF);
+
         alJPanel.add(jTextFieldArray);
 
         jbCloseButton.addActionListener(new ActionListener() {
@@ -287,29 +340,42 @@ public class InvoiceWindow extends JFrame {
     public void createPDF(){
         try {
             document = new Document();
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("Invoice.pdf"));
+            writer = PdfWriter.getInstance(document, new FileOutputStream("Invoice.pdf"));
             document.open();
 
-            Font titleFont = FontFactory.getFont("Century-Gothic", 30);
-            Font normalFont = FontFactory.getFont("Century-Gothic", 14);
+            com.itextpdf.text.Font titleFont = FontFactory.getFont("Arial-Narrow", 30);
+            normalFont = FontFactory.getFont("Arial-Narrow", 11);
+            titleFont.setColor(BaseColor.BLUE);
+
+            com.itextpdf.text.Font dateFont = FontFactory.getFont("Arial-Narrow", 18);
+            dateFont.setColor(BaseColor.DARK_GRAY);
 
             Paragraph pCompanyName = new Paragraph(sCompanyName, titleFont);
             Paragraph pCompanyAddress = new Paragraph(sCompanyAddress, normalFont);
             Paragraph pSellerName = new Paragraph("From " + sSellerName, normalFont);
             Paragraph pClientName = new Paragraph("Invoice For " + sClientName, normalFont);
             Paragraph pClientAddress = new Paragraph(sClientAddress, normalFont);
-            Paragraph pDate = new Paragraph(sDate, normalFont);
+            Paragraph pDate = new Paragraph("INVOICE  | " + sDate, dateFont);
             Paragraph pInvoiceForMessage = new Paragraph("Invoice For", normalFont);
+
 
             pCompanyName.setAlignment(Element.ALIGN_LEFT);
             pSellerName.setAlignment(Element.ALIGN_LEFT);
             pCompanyAddress.setAlignment(Element.ALIGN_LEFT);
             pClientName.setAlignment(Element.ALIGN_RIGHT);
             pClientAddress.setAlignment(Element.ALIGN_RIGHT);
-            pDate.setAlignment(Element.ALIGN_RIGHT);
+            pDate.setAlignment(Element.ALIGN_LEFT);
             pInvoiceForMessage.setAlignment(Element.ALIGN_RIGHT);
 
-            document.add(pCompanyName);
+            if (jbFileChooserButton.getText().equals("Logo not selected")){
+                document.add(pCompanyName);
+            }else{
+                pdfImage.scaleAbsolute(150, 150);
+                document.add(pdfImage);
+            }
+
+            document.add(pDate);
+
             document.add(Chunk.NEWLINE);
             document.add(pClientName);
             document.add(pClientAddress);
@@ -324,43 +390,113 @@ public class InvoiceWindow extends JFrame {
 
     public void createItemTable(){
         try {
-            PdfPTable itemTable = new PdfPTable(4);
+            float[] columnWidths = new float[] {100f, 60f, 60f, 60f};
 
-            PdfPCell nameHeader = new PdfPCell(new Phrase("Description"));
-            PdfPCell quantityHeader = new PdfPCell(new Phrase("Quantity"));
-            PdfPCell unitPriceHeader = new PdfPCell(new Phrase("Unit Price"));
-            PdfPCell amountHeader = new PdfPCell(new Phrase("Amount"));
+            PdfPTable itemTable = new PdfPTable(columnWidths);
+
+            itemTable.setWidths(columnWidths);
+
+            Phrase nameHeaderPhrase = new Phrase("Description");
+            Phrase quantityHeaderPhrase = new Phrase("Quantity");
+            Phrase unitPriceHeaderPhrase = new Phrase("Unit Price");
+            Phrase amountHeaderPhrase = new Phrase("Amount");
+
+            nameHeaderPhrase.setFont(normalFont);
+            quantityHeaderPhrase.setFont(normalFont);
+            unitPriceHeaderPhrase.setFont(normalFont);
+            amountHeaderPhrase.setFont(normalFont);
+
+            PdfPCell nameHeader = new PdfPCell(nameHeaderPhrase);
+            PdfPCell quantityHeader = new PdfPCell(quantityHeaderPhrase);
+            PdfPCell unitPriceHeader = new PdfPCell(unitPriceHeaderPhrase);
+            PdfPCell amountHeader = new PdfPCell(amountHeaderPhrase);
+
+            nameHeader.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            quantityHeader.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            unitPriceHeader.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            amountHeader.setBackgroundColor(BaseColor.LIGHT_GRAY);
+
+            nameHeader.setFixedHeight(20F);
+            quantityHeader.setFixedHeight(20F);
+            unitPriceHeader.setFixedHeight(20F);
+            amountHeader.setFixedHeight(20F);
 
             itemTable.addCell(nameHeader);
             itemTable.addCell(quantityHeader);
             itemTable.addCell(unitPriceHeader);
             itemTable.addCell(amountHeader);
 
+            nameHeader.setFixedHeight(30f);
+            quantityHeader.setFixedHeight(30f);
+            unitPriceHeader.setFixedHeight(30f);
+            amountHeader.setFixedHeight(30f);
+
             totalPrice = 0.0;
 
             for (int i = 0; i < alJPanel.size(); i++){
                 String itemName = alJPanel.get(i)[0].getText();
-                Double quantity = Double.parseDouble(alJPanel.get(i)[1].getText());
+                int quantity = Integer.parseInt(alJPanel.get(i)[1].getText());
                 Double price = Double.parseDouble(alJPanel.get(i)[2].getText());
                 Double amount = price * quantity;
 
-                itemTable.addCell(new PdfPCell(new Phrase(itemName)));  //Name
-                itemTable.addCell(new PdfPCell(new Phrase(quantity + "")));  //Quantity
-                itemTable.addCell(new PdfPCell(new Phrase(price + " ")));  //Price
-                itemTable.addCell(new PdfPCell(new Phrase(amount + " ")));
+                Phrase itemNamePhrase = new Phrase(itemName, normalFont);
+                Phrase quantityPhrase = new Phrase(quantity + "", normalFont);
+                Phrase pricePhrase = new Phrase("" + price, normalFont);
+                Phrase amountPhrase = new Phrase("" + amount, normalFont);
+
+                DecimalFormat df = new DecimalFormat("0.00");
+                amount = Double.parseDouble(df.format(amount));
+
+                PdfPCell itemNameCell = new PdfPCell(itemNamePhrase);
+                PdfPCell quantityCell = new PdfPCell(quantityPhrase);
+                PdfPCell priceCell = new PdfPCell(pricePhrase);
+                PdfPCell amountCell = new PdfPCell(amountPhrase);
+
+                itemNameCell.setFixedHeight(40f);
+                quantityCell.setFixedHeight(40f);
+                priceCell.setFixedHeight(40f);
+                amountCell.setFixedHeight(40f);
+
+                itemTable.addCell(itemNameCell);  //Name
+                itemTable.addCell(quantityCell);  //Quantity
+                itemTable.addCell(priceCell);  //Price
+                itemTable.addCell(amountCell);
 
                 totalPrice += amount;
             }
 
-            document.add(Chunk.NEWLINE);
-            document.add(Chunk.NEWLINE);
+            for (int i = 0; i <= 26; i++){
+                PdfPCell cell = new PdfPCell(new Phrase(" "));
+                cell.setFixedHeight(40f);
+                itemTable.addCell(cell);
 
-            Paragraph pTotalPrice = new Paragraph("Amount Due: " + totalPrice);
+            }
+
+            DecimalFormat df = new DecimalFormat("0.00");
+            totalPrice = Double.parseDouble(df.format(totalPrice));
+
+            com.itextpdf.text.Font totalPriceFont = FontFactory.getFont("Arial-Narrow", 30);
+            totalPriceFont.setColor(BaseColor.RED);
+
+            Paragraph pTotalPrice = new Paragraph("TOTAL: "+ totalPrice, totalPriceFont);
             pTotalPrice.setAlignment(Element.ALIGN_RIGHT);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
 
             document.add(itemTable);
             document.add(Chunk.NEWLINE);
             document.add(pTotalPrice);
+
+            Paragraph pGoodBye = new Paragraph("Thank you for your business." +
+                    " Please leave feedback once you are happy and enjoy your purchase!");
+
+            pGoodBye.setFont(normalFont);
+
+            pGoodBye.setAlignment(Element.ALIGN_CENTER);
+
+            document.add(Chunk.NEWLINE);
+            document.add(pGoodBye);
 
             document.close();
 
@@ -369,6 +505,7 @@ public class InvoiceWindow extends JFrame {
             e.printStackTrace();
         }
     }
+
 
 
 }
