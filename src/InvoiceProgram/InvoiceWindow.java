@@ -370,8 +370,9 @@ public class InvoiceWindow extends JFrame {
             if (jbFileChooserButton.getText().equals("Logo not selected")){
                 document.add(pCompanyName);
             }else{
-                pdfImage.scaleAbsolute(150, 150);
+                pdfImage.scaleAbsolute(115, 115);
                 document.add(pdfImage);
+                document.add(pCompanyName);
             }
 
             document.add(pDate);
@@ -439,13 +440,16 @@ public class InvoiceWindow extends JFrame {
                 Double price = Double.parseDouble(alJPanel.get(i)[2].getText());
                 Double amount = price * quantity;
 
-                Phrase itemNamePhrase = new Phrase(itemName, normalFont);
-                Phrase quantityPhrase = new Phrase(quantity + "", normalFont);
-                Phrase pricePhrase = new Phrase("" + price, normalFont);
-                Phrase amountPhrase = new Phrase("" + amount, normalFont);
+                Paragraph priceParagraph = new Paragraph("\u00A3"+price, normalFont);
+                Paragraph amountParagraph = new Paragraph("\u00A3"+amount, normalFont);
 
                 DecimalFormat df = new DecimalFormat("0.00");
                 amount = Double.parseDouble(df.format(amount));
+
+                Phrase itemNamePhrase = new Phrase(itemName, normalFont);
+                Phrase pricePhrase = new Phrase(priceParagraph);
+                Phrase amountPhrase = new Phrase(amountParagraph);
+                Phrase quantityPhrase = new Phrase(quantity + "", normalFont);
 
                 PdfPCell itemNameCell = new PdfPCell(itemNamePhrase);
                 PdfPCell quantityCell = new PdfPCell(quantityPhrase);
@@ -478,7 +482,7 @@ public class InvoiceWindow extends JFrame {
             com.itextpdf.text.Font totalPriceFont = FontFactory.getFont("Arial-Narrow", 30);
             totalPriceFont.setColor(BaseColor.RED);
 
-            Paragraph pTotalPrice = new Paragraph("TOTAL: "+ totalPrice, totalPriceFont);
+            Paragraph pTotalPrice = new Paragraph("TOTAL: "+ "\u00A3" + totalPrice, totalPriceFont);
             pTotalPrice.setAlignment(Element.ALIGN_RIGHT);
 
             document.add(Chunk.NEWLINE);
