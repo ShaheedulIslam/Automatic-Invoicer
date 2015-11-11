@@ -1,5 +1,3 @@
-package InvoiceProgram;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -25,24 +23,24 @@ public class InvoiceWindow extends JFrame {
     JLabel jlCompanyAddress;
     JLabel jlDate;
     JLabel jlItemName;
-    JLabel jlClientName;
-    JLabel jlClientAddress;
     JLabel jlQty;
     JLabel jlDescription;
     JLabel jlUnitPrice;
     JLabel jlItemLabel;
     JLabel jlSellerName;
+    JLabel jlClientName;
+    JLabel jlClientAddress;
 
     JTextField jtItemName;
     JTextField jtCompanyName;
     JTextField jtCompanyAddress;
     JTextField jtDate;
-    JTextField jtClientName;
     JTextField jtQty;
     JTextField jtDescription;
     JTextField jtUnitPrice;
-    JTextField jtClientAddress;
     JTextField jtSellerName;
+    JTextField jtClientName;
+    JTextField jtClientAddress;
 
     String sCompanyName;
     String sCompanyAddress;
@@ -70,14 +68,24 @@ public class InvoiceWindow extends JFrame {
     ArrayList<JTextField[]> alJPanel;
     JTextField[] jTextFieldArray;
     String[] itemInfo;
+
+    Double totalPrice;
+
     Document document;
     EmptyBorder bLabelBorder;
-    Double totalPrice;
     PdfWriter writer;
-    JFileChooser fileChooser;
+
+    JFileChooser fileChooserForImage, fileChooserForCSV;
+    JMenuBar menuBar;
+    JMenu menu;
+    JMenuItem menuItem;
+
     Image pdfImage;
+
     com.itextpdf.text.Font normalFont;
     Font fontForJTF;
+
+    File csvFile;
 
     public InvoiceWindow() {
         super("Invoice Program");
@@ -123,8 +131,8 @@ public class InvoiceWindow extends JFrame {
         jtCompanyName = new JTextField();
         jtCompanyAddress = new JTextField();
         jtDate = new JTextField();
-        jtClientName = new JTextField();
-        jtClientAddress = new JTextField();
+        JTextField jtClientName = new JTextField();
+        JTextField jtClientAddress = new JTextField();
         jtSellerName = new JTextField();
 
         //----------------------------------------
@@ -152,7 +160,7 @@ public class InvoiceWindow extends JFrame {
         jlCompanyAddress.setBorder(bLabelBorder);
         jlDate.setBorder(bLabelBorder);
         jlClientAddress.setBorder(bLabelBorder);
-        jlClientName.setBorder(bLabelBorder);
+
         jlSellerName.setBorder(bLabelBorder);
 
 
@@ -175,12 +183,6 @@ public class InvoiceWindow extends JFrame {
 
         jpMainInfo.add(jlCompanyAddress);
         jpMainInfo.add(jtCompanyAddress);
-
-        jpMainInfo.add(jlClientName);
-        jpMainInfo.add(jtClientName);
-
-        jpMainInfo.add(jlClientName);
-        jpMainInfo.add(jtClientName);
 
         jpMainInfo.add(jlClientAddress);
         jpMainInfo.add(jtClientAddress);
@@ -215,6 +217,16 @@ public class InvoiceWindow extends JFrame {
         jtpMainTabbedPane.add("Client and Company Information", jpMainInfo);
         jpMain1.add(jtpMainTabbedPane);
 
+        menuBar = new JMenuBar();
+
+        menu = new JMenu("File");
+        menuItem = new JMenuItem("Upload a CSV");
+
+        menuBar.add(menu);
+        menu.add(menuItem);
+
+        setJMenuBar(menuBar);
+
     }
 
     public void addActions() {
@@ -226,15 +238,15 @@ public class InvoiceWindow extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         sCompanyName = jtCompanyName.getText();
                         sCompanyAddress = jtCompanyAddress.getText();
-                        sClientName = jtClientName.getText();
-                        sClientAddress = jtClientAddress.getText();
+
+
                         sSellerName = jtSellerName.getText();
                         sDate = jtDate.getText();
+                        sClientName = jTextFieldArray[3].getText();
+                        sClientAddress = jTextFieldArray[4].getText();
 
                         createPDF();
-                        createItemTable();
-
-                        JOptionPane.showMessageDialog(null, "Your Invoice PDF has been created successfully");
+                        outputCSV();
 
                     }
                 });
@@ -252,22 +264,37 @@ public class InvoiceWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     FileNameExtensionFilter filter = new FileNameExtensionFilter("Image files",  ImageIO.getReaderFileSuffixes());
-                    fileChooser = new JFileChooser();
-                    fileChooser.setFileFilter(filter);
-                    int returnValue = fileChooser.showOpenDialog(null);
+                    fileChooserForImage = new JFileChooser();
+                    fileChooserForImage.setFileFilter(filter);
+                    int returnValue = fileChooserForImage.showOpenDialog(null);
                     File file = null;
 
                     if (returnValue == JFileChooser.APPROVE_OPTION) {
-                        file = fileChooser.getSelectedFile();
+                        file = fileChooserForImage.getSelectedFile();
                     }
 
-                    pdfImage = Image.getInstance(fileChooser.getSelectedFile().getAbsolutePath());
+                    pdfImage = Image.getInstance(fileChooserForImage.getSelectedFile().getAbsolutePath());
                     jbFileChooserButton.setText("Logo Selected");
 
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
 
+            }
+        });
+
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fileChooserForCSV = new JFileChooser();
+                fileChooserForCSV.setFileFilter(new FileNameExtensionFilter("CSV Files", ".csv"));
+                int returnValue = fileChooserForCSV.showOpenDialog(null);
+                File file = null;
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    file = fileChooserForImage.getSelectedFile();
+                }
+
+                csvFile = file;
             }
         });
 
@@ -283,9 +310,15 @@ public class InvoiceWindow extends JFrame {
         JLabel jlItemQuantity = new JLabel("Item Quantity: ");
         JLabel jlItemPrice = new JLabel("Item Price: ");
         JLabel jlTabTitle = new JLabel("Item ");
+        JLabel jlClientName = new JLabel("Client Name: ");
+        JLabel jlClientAddress = new JLabel("Client Address: ");
+
         JTextField jtfItemName = new JTextField();
         JTextField jtfItemQuantity = new JTextField();
         JTextField jtfItemPrice = new JTextField();
+        JTextField jtClientName = new JTextField();
+        JTextField jtClientAddress = new JTextField();
+
         JButton jbCloseButton = new JButton("X");
 
         jbCloseButton.setForeground(Color.RED);
@@ -298,6 +331,9 @@ public class InvoiceWindow extends JFrame {
         jlItemName.setBorder(bLabelBorder);
         jlItemQuantity.setBorder(bLabelBorder);
         jlItemPrice.setBorder(bLabelBorder);
+        jlClientAddress.setBorder(bLabelBorder);
+        jlClientName.setBorder(bLabelBorder);
+
 
         jpTabContent.add(jlItemName);
         jpTabContent.add(jtfItemName);
@@ -305,21 +341,31 @@ public class InvoiceWindow extends JFrame {
         jpTabContent.add(jtfItemQuantity);
         jpTabContent.add(jlItemPrice);
         jpTabContent.add(jtfItemPrice);
+        jpTabContent.add(jlClientName);
+        jpTabContent.add(jtClientName);
+        jpTabContent.add(jlClientAddress);
+        jpTabContent.add(jtClientAddress);
+
         jpTabTitle.add(jlTabTitle);
         jpTabTitle.add(jbCloseButton);
+
 
         jtpMainTabbedPane.addTab("",jpTabContent);
         jtpMainTabbedPane.setTabComponentAt(jtpMainTabbedPane.getTabCount() - 1, jpTabTitle);
 
-        jTextFieldArray = new JTextField[3];
+        jTextFieldArray = new JTextField[5];
 
         jTextFieldArray[0] = jtfItemName;
         jTextFieldArray[1] = jtfItemQuantity;
         jTextFieldArray[2] = jtfItemPrice;
+        jTextFieldArray[3] = jtClientName;
+        jTextFieldArray[4] = jtClientAddress;
 
         jtfItemName.setFont(fontForJTF);
         jtfItemQuantity.setFont(fontForJTF);
         jtfItemPrice.setFont(fontForJTF);
+        jtClientName.setFont(fontForJTF);
+        jtClientAddress.setFont(fontForJTF);
 
         alJPanel.add(jTextFieldArray);
 
@@ -337,7 +383,7 @@ public class InvoiceWindow extends JFrame {
 
     }
 
-    public void createPDF(){
+    public void addCompanyAndClientInfo(){
         try {
             document = new Document();
             writer = PdfWriter.getInstance(document, new FileOutputStream("Invoice.pdf"));
@@ -473,7 +519,6 @@ public class InvoiceWindow extends JFrame {
                 PdfPCell cell = new PdfPCell(new Phrase(" "));
                 cell.setFixedHeight(40f);
                 itemTable.addCell(cell);
-
             }
 
             DecimalFormat df = new DecimalFormat("0.00");
@@ -509,7 +554,59 @@ public class InvoiceWindow extends JFrame {
             e.printStackTrace();
         }
     }
+    public void createPDF(){
+        addCompanyAndClientInfo();
+        createItemTable();
+
+        JOptionPane.showMessageDialog(null, "Your Invoice PDF has been created successfully");
+    }
+
+    public void outputCSV(){
+        try {
+            FileWriter fileWriter = new FileWriter("Item CSV.csv");
 
 
+            fileWriter.append("Item Name");
+            fileWriter.append(',');
+            fileWriter.append("Item Cost");
+            fileWriter.append(',');
+            fileWriter.append("Item Quantity");
+            fileWriter.append(',');
+
+            fileWriter.append("Company Name");
+            fileWriter.append(',');
+            fileWriter.append("Company Address");
+            fileWriter.append(',');
+            fileWriter.append("Seller Name");
+            fileWriter.append(',');
+
+            for (int i = 0; i < alJPanel.size(); i++){
+                fileWriter.append('\n');
+
+                fileWriter.append(alJPanel.get(i)[0].getText() + "");
+                fileWriter.append(',');
+
+                fileWriter.append(alJPanel.get(i)[1].getText() + "");
+                fileWriter.append(',');
+
+                fileWriter.append(alJPanel.get(i)[2].getText() + "");
+                fileWriter.append(',');
+            }
+
+            fileWriter.append(sCompanyName);
+            fileWriter.append(',');
+            fileWriter.append(sCompanyAddress);
+            fileWriter.append(',');
+            fileWriter.append(sSellerName);
+
+            fileWriter.flush();
+            fileWriter.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
 }
