@@ -255,7 +255,7 @@ public class InvoiceWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 iNumOfItems++;
-                createItemPanel();
+                createItemPanel("", "");
             }
         });
 
@@ -287,20 +287,21 @@ public class InvoiceWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 fileChooserForCSV = new JFileChooser();
-                fileChooserForCSV.setFileFilter(new FileNameExtensionFilter("CSV Files", ".csv"));
+                fileChooserForCSV.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
                 int returnValue = fileChooserForCSV.showOpenDialog(null);
                 File file = null;
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    file = fileChooserForImage.getSelectedFile();
+                    file = fileChooserForCSV.getSelectedFile();
                 }
 
                 csvFile = file;
+                readCSV();
             }
         });
 
     }
 
-    public void createItemPanel(){
+    public void createItemPanel(String itemName, String itemPrice){
         iNumOfItems++;
 
         JPanel jpTabContent = new JPanel(new GridLayout(0, 2));
@@ -313,8 +314,8 @@ public class InvoiceWindow extends JFrame {
         JLabel jlClientName = new JLabel("Client Name: ");
         JLabel jlClientAddress = new JLabel("Client Address: ");
 
-        JTextField jtfItemName = new JTextField();
-        JTextField jtfItemQuantity = new JTextField();
+        JTextField jtfItemName = new JTextField(itemName);
+        JTextField jtfItemQuantity = new JTextField(itemPrice);
         JTextField jtfItemPrice = new JTextField();
         JTextField jtClientName = new JTextField();
         JTextField jtClientAddress = new JTextField();
@@ -609,4 +610,39 @@ public class InvoiceWindow extends JFrame {
 
     }
 
-}
+
+    public void readCSV(){
+        try {
+
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(csvFile));
+            String newLine;
+            ArrayList<String[]> lines = new ArrayList<>();
+            int lineNums = 0;
+
+            while ((newLine = bufferedReader.readLine()) != null){
+                newLine = bufferedReader.readLine();
+                lineNums++;
+
+                System.out.println(newLine);
+                lines.add(newLine.split(","));
+
+                jtCompanyName.setText(lines.get(0)[3]);
+                jtCompanyAddress.setText(lines.get(0)[4]);
+                jtSellerName.setText(lines.get(0)[5]);
+
+            }
+
+            bufferedReader.close();
+
+            for (int i = 0; i < lines.size(); i++){
+                createItemPanel(lines.get(i)[0], lines.get(i)[1]);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    }
+
+
